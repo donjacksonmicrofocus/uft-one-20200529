@@ -45,11 +45,13 @@ If DataTable.GlobalSheet.GetParameter("BusinessProcess") = 3 Then
 	'Because the products aren't visible on the page when you first click on the New Arrivals, use a traditional OR which will include forcing a scroll to the place on the page where the item is located.
 	Browser("Browser").Page("New Arrivals – ambsn").WebElement("ProducttoPick").Click	'Using traditional OR, click on the product name from the datasheet
 	AIUtil("combobox", "Size").Select DataTable.GlobalSheet.GetParameter("Size")	'Select the Size from the datasheet
-	AIUtil.FindTextBlock("Add to Cart").Click										'Add the product to the cart
-	AIUtil("button", "CheckOut-y").Click											'Click the CheckOut button
-	'Because the Return to cart text isn't visible on the page when you first click CheckOut, use a traditional OR which will include forcing a scroll to the place on the page where the item is located.
-	Browser("Browser").Page("Information - ambsn -").WebElement("Return to cart").Click	'Click the Return to cart link
-	Browser("Browser").Page("Your Shopping Cart – ambsn").WebElement("WebElement").Click	'Click the Trash can icon, it's too small for the AI vision to see it
+	If AIUtil.FindTextBlock("Add to Cart").Exist(10) Then								'This will only show up if the product is available, if not, skip it
+		AIUtil.FindTextBlock("Add to Cart").Click										'Add the product to the cart
+		AIUtil("button", "CheckOut-y").Click											'Click the CheckOut button
+		'Because the Return to cart text isn't visible on the page when you first click CheckOut, use a traditional OR which will include forcing a scroll to the place on the page where the item is located.
+		Browser("Browser").Page("Information - ambsn -").WebElement("Return to cart").Click	'Click the Return to cart link
+		Browser("Browser").Page("Your Shopping Cart – ambsn").WebElement("WebElement").Click	'Click the Trash can icon, it's too small for the AI vision to see it
+	End If
 End If
 
 AIUtil("mail").Exist(10)														'Synchronization, seems that the "Got a Question" is always the last object to open
